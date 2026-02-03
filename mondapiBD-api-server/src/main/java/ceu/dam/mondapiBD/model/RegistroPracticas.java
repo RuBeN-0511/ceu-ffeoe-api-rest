@@ -1,5 +1,11 @@
 package ceu.dam.mondapiBD.model;
 
-public class RegistroPracticas {
+import lombok.Data;
 
+@Data
+public class RegistroPracticas {
+	private Alumnos id;
+	private Fecha fecha;
+	private Integer cantidadHoras;
+	private String descripcion;
 }

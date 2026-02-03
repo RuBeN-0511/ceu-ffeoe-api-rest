@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @Document(collection = "alumnos")
-public class Alumnos {
+public class Alumno {
 	@Id
 	private String id;
 	private String nombreAlumno;

@@ -7,11 +7,12 @@ import lombok.Data;
 
 @Data
 @Document(collection = "usuarios")
-public class Usuarios {
+public class Usuario {
 	@Id
 	private String id;
 	private String nombreUsuario;
 	private String contraseña;
 	private String perfil;
-	private boolean activo;
+	private Boolean activo;
+	private Boolean estaLogueado;
 }

@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class RegistroPracticas {
-	private Alumnos id;
+	private Alumno id;
 	private Fecha fecha;
 	private Integer cantidadHoras;
 	private String descripcion;

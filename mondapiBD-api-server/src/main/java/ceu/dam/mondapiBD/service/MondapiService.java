@@ -92,14 +92,12 @@ public interface MondapiService {
 	 * La fecha debe estar disponible (sin registro previo), las horas deben ser
 	 * mayores a 0, menores o iguales a 8, y con saltos de 0.5.
 	 *
-	 * @param fechaDisponible Fecha seleccionada para el registro (debe estar libre)
-	 * @param cantidadHoras Cantidad de horas trabajadas (> 0, <= 8, múltiplo de 0.5)
-	 * @param detalle Descripción detallada de las actividades realizadas
+	 * @param Registro Nuevo
 	 * @return El registro de prácticas creado
 	 * @throws ValidationException si los datos no cumplen las validaciones
 	 * @throws BusinessException si la fecha ya tiene un registro asociado
 	 */
-	public RegistroPracticas crearRegistros(LocalDate fechaDisponible, Integer cantidadHoras, String detalle);
+	public RegistroPracticas crearRegistros(RegistroPracticas nuevoRegistro);
  
  
 	/**

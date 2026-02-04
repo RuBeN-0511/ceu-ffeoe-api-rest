@@ -10,7 +10,7 @@ import ceu.dam.mondapiBD.model.Alumno;
 import ceu.dam.mondapiBD.model.RegistroPracticas;
 import ceu.dam.mondapiBD.model.Usuario;
 
-public interface MondapiService {
+public interface UserService {
 
 	/**
 	 * Realiza el login de un usuario en el sistema.

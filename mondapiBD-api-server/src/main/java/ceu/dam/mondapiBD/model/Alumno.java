@@ -13,7 +13,7 @@ public class Alumno {
 	private String nombreAlumno;
 	private String ciclo;
 	private String evaluacion;
-	private Integer anioCurso;
-	private Empresas nombreTutuor;
-	private Empresas empresaAsignada;
+	private Integer añoCurso;
+	private String idTutorDocente;
+	private String idEmpresa;
 }

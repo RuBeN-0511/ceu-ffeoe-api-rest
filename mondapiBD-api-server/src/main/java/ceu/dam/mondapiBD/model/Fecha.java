@@ -1,6 +1,6 @@
 package ceu.dam.mondapiBD.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -9,7 +9,8 @@ import lombok.Data;
 @Data
 @Document(collection = "fechas")
 public class Fecha {
-	private Date fecha;
-	private Integer anioCurso;
+	private String id;
+	private LocalDate fecha;
+	private Integer añoCurso;
 	private String evaluacion;
 }

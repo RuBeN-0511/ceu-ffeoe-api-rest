@@ -6,10 +6,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.Data;
 
 @Data
-@Document(collection = "tutorDocente")
+@Document(collection = "tutoresDocentes")
 public class TutorDocente {
 	@Id
 	private String id;
 	private String nombreDocente;
-	private boolean activo;	
+	private Boolean activo;
 }

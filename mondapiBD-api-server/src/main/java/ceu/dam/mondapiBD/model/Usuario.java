@@ -13,6 +13,8 @@ public class Usuario {
 	private String nombreUsuario;
 	private String contraseña;
 	private String perfil;
+	private String idAlumno;
+	private String idTutor;
 	private Boolean activo;
 	private Boolean estaLogueado;
 }

@@ -7,12 +7,12 @@ import lombok.Data;
 
 @Data
 @Document(collection = "empresas")
-public class Empresas {
+public class Empresa {
 	@Id
 	private String id;
 	private String tutorLaboral;
 	private String emailTutor;
 	private Integer numeroTelefono;
-	private boolean activo;
+	private Boolean activo;
 	
 }

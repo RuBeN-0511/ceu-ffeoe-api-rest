@@ -1,6 +1,5 @@
 package ceu.dam.mondapiBD.service;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import ceu.dam.mondapiBD.exceptions.AuthenticationException;

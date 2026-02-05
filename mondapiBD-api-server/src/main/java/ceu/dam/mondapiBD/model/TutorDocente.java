@@ -10,7 +10,7 @@ import lombok.Data;
 public class TutorDocente {
 
 	@Id
-	private String idTutor;
+	private String id;
 	private String idUsuario;
 	private String nombreDocente;
 	private Boolean activo;

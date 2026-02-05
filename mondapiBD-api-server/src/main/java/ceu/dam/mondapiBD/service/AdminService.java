@@ -21,10 +21,11 @@ public interface AdminService {
 	 * @return El tutor docente asociado al usuario autenticado
 	 * @throws UserNotFoundException 
 	 * @throws IncorrectPasswordException 
+	 * @throws UserNotActiveException 
 	 * @throws AuthenticationException si las credenciales son inválidas o el
 	 *                                 usuario está inactivo
 	 */
-	public TutorDocente login(String username, String contraseña) throws UserNotFoundException, IncorrectPasswordException;
+	public TutorDocente login(String username, String contraseña) throws UserNotFoundException, IncorrectPasswordException, UserNotActiveException;
 
 	/**
 	 * Cambia la contraseña del usuario actual. La contraseña tendrá una longitud
@@ -56,19 +57,21 @@ public interface AdminService {
 	 * 
 	 * @param idUsuario Identificador del usuario cuya contraseña se va a cambiar
 	 * @param contraseñaNueva La nueva contraseña (cifrada, mínimo 8 caracteres)
+	 * @throws UserNotFoundException 
 	 * @throws ValidationException si la contraseña no cumple los requisitos mínimos
 	 * @throws NotFoundException si el usuario no existe
 	 */
-	public void cambiarContraseñaUsuario(String idUsuario, String contraseñaNueva);
+	public void cambiarContraseñaUsuario(String idUsuario, String contraseñaNueva) throws UserNotFoundException;
 	
 	/**
 	 * Activa un usuario que estaba inactivo. Solo puede ejecutarse si el usuario
 	 * está actualmente inactivo.
 	 * 
 	 * @param id Identificador del usuario a activar
+	 * @throws UserNotFoundException 
 	 * @throws ValidationException si el usuario ya está activo o no existe
 	 */
-	public void activarUsuario(String id);
+	public void activarUsuario(String id) throws UserNotFoundException;
 
 	/**
 	 * Desactiva un usuario que está activo. Solo puede ejecutarse si el usuario

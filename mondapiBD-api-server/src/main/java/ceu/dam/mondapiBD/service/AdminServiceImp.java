@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,14 +26,17 @@ public class AdminServiceImp implements AdminService {
 
 	@Override
 	public TutorDocente login(String username, String contraseña)
-			throws UserNotFoundException, IncorrectPasswordException {
+			throws UserNotFoundException, IncorrectPasswordException, UserNotActiveException {
 
 		Optional<Usuario> userOpt = repoUser.findOneByNombreUsuario(username);
 
 		if (userOpt.isEmpty()) {
 			throw new UserNotFoundException("El nombre de usuario indicado no existe");
-		} else if (!userOpt.get().getContraseña().equals(contraseña)) {
+		} else if (!userOpt.get().getContraseña().equals(DigestUtils.sha3_512Hex(contraseña))) {
 			throw new IncorrectPasswordException("La contraseña y el nombre de usuario no coincide");
+		} else if (!userOpt.get().getActivo()) {
+			throw new UserNotActiveException("El usuario no se encuentra activo para hacer login");
+
 		}
 
 		userOpt.get().setEstaLogueado(true);
@@ -56,7 +60,7 @@ public class AdminServiceImp implements AdminService {
 			throw new UserNotLoggedException("El usuario no se encuentra logeado");
 		} else if (userOpt.get().getContraseña().equals(contraseñaAntigua)) {
 
-			userOpt.get().setContraseña(contraseñaNueva);
+			userOpt.get().setContraseña(DigestUtils.sha3_512Hex(contraseñaNueva));
 
 			repoUser.save(userOpt.get());
 
@@ -64,21 +68,45 @@ public class AdminServiceImp implements AdminService {
 
 	}
 
+	// TODO: verificar que el usuario esta logeado
 	@Override
 	public List<Usuario> consultarUsuarios() {
-		return null;
+
+		return repoUser.findAll();
+
 	}
 
 	@Override
-	public void cambiarContraseñaUsuario(String idUsuario, String contraseñaNueva) {
+	public void cambiarContraseñaUsuario(String idUsuario, String contraseñaNueva) throws UserNotFoundException {
+
+		Optional<Usuario> userOpt = repoUser.findById(idUsuario);
+		if (userOpt.isEmpty()) {
+			throw new UserNotFoundException("El usuario indicado no existe en BBDD");
+		}
+
+		userOpt.get().setContraseña(DigestUtils.sha3_512Hex(contraseñaNueva));
+
+		repoUser.save(userOpt.get());
+
 	}
 
+//	TODO: si se va a llamar al metodo desde la lista de usuarios, realmente es necesario este metodo?
 	@Override
-	public void activarUsuario(String id) {
+	public void activarUsuario(String idUsuario) throws UserNotFoundException {
+
+		Optional<Usuario> userOpt = repoUser.findById(idUsuario);
+
+		if (userOpt.isEmpty()) {
+			throw new UserNotFoundException("No se ha encontrado el usuario indicado");
+		} else if (!userOpt.get().getActivo()) {
+			userOpt.get().setActivo(true);
+		}
+
 	}
 
+	// TODO: Se pueden juntar en un mismo metodo llamada alternar
 	@Override
-	public void desactivarUsuario(String id) {
+	public void desactivarUsuario(String idUsuario) {
 	}
 
 	@Override

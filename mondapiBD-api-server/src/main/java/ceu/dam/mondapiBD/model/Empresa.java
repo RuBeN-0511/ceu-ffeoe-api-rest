@@ -10,6 +10,7 @@ import lombok.Data;
 public class Empresa {
 	@Id
 	private String id;
+	private String nombreEmpresa;
 	private String tutorLaboral;
 	private String emailTutor;
 	private Integer numeroTelefono;

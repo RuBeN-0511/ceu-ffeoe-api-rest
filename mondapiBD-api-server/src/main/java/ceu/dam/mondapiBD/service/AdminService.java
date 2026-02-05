@@ -19,10 +19,12 @@ public interface AdminService {
 	 * @param username   El nombre de usuario
 	 * @param contraseña La contraseña cifrada del usuario
 	 * @return El tutor docente asociado al usuario autenticado
+	 * @throws UserNotFoundException 
+	 * @throws IncorrectPasswordException 
 	 * @throws AuthenticationException si las credenciales son inválidas o el
 	 *                                 usuario está inactivo
 	 */
-	public TutorDocente login(String username, String contraseña);
+	public TutorDocente login(String username, String contraseña) throws UserNotFoundException, IncorrectPasswordException;
 
 	/**
 	 * Cambia la contraseña del usuario actual. La contraseña tendrá una longitud
@@ -34,7 +36,7 @@ public interface AdminService {
 	 * @throws ValidationException si la contraseña antigua es incorrecta o la nueva
 	 *                             no cumple requisitos
 	 */
-	public void cambiarContraseña(String contraseñaAntigua, String contraseñaNueva);
+	public void cambiarContraseña(String idUsuario, String contraseñaAntigua, String contraseñaNueva);
 
 	/**
 	 * Consulta todos los usuarios del sistema. Muestra información de usuario,
@@ -83,10 +85,11 @@ public interface AdminService {
 	 * 
 	 * @param nuevoUsuario Objeto con los datos del nuevo usuario
 	 * @return El usuario creado
+	 * @throws UserExistsException 
 	 * @throws ValidationException si el nombre de usuario ya existe o los datos no
 	 *                             son válidos
 	 */
-	public Usuario crearUsuario(Usuario nuevoUsuario);
+	public Usuario crearUsuario(Usuario nuevoUsuario) throws UserExistsException;
 	
 	/**
 	 * Edita los datos de un usuario existente.

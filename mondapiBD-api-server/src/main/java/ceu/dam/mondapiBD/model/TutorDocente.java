@@ -8,8 +8,10 @@ import lombok.Data;
 @Data
 @Document(collection = "tutoresDocentes")
 public class TutorDocente {
+
 	@Id
-	private String id;
+	private String idTutor;
+	private String idUsuario;
 	private String nombreDocente;
 	private Boolean activo;
 }

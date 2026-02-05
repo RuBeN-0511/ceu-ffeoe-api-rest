@@ -10,6 +10,7 @@ import lombok.Data;
 public class Alumno {
 	@Id
 	private String id;
+	private String idUsuario;
 	private String nombreAlumno;
 	private String ciclo;
 	private String evaluacion;

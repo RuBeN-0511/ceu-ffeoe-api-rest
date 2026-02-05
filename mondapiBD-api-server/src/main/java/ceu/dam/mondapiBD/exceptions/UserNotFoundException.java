@@ -1,4 +1,4 @@
-package ceu.dam.mondapiBD.service;
+package ceu.dam.mondapiBD.exceptions;
 
 public class UserNotFoundException extends Exception {
 

@@ -6,13 +6,25 @@ import java.util.Optional;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import ceu.dam.mondapiBD.exceptions.IncorrectPasswordException;
+import ceu.dam.mondapiBD.exceptions.NotFoundException;
+import ceu.dam.mondapiBD.exceptions.UserExistsException;
+import ceu.dam.mondapiBD.exceptions.UserNotActiveException;
+import ceu.dam.mondapiBD.exceptions.UserNotFoundException;
+import ceu.dam.mondapiBD.exceptions.UserNotLoggedException;
+import ceu.dam.mondapiBD.exceptions.UsernameUsedException;
 import ceu.dam.mondapiBD.model.Alumno;
 import ceu.dam.mondapiBD.model.Empresa;
 import ceu.dam.mondapiBD.model.Fecha;
 import ceu.dam.mondapiBD.model.TutorDocente;
 import ceu.dam.mondapiBD.model.Usuario;
+import ceu.dam.mondapiBD.repository.AlumnoRepository;
+import ceu.dam.mondapiBD.repository.EmpresaRepository;
+import ceu.dam.mondapiBD.repository.FechaRepository;
+import ceu.dam.mondapiBD.repository.RegistroRepository;
 import ceu.dam.mondapiBD.repository.TutorDocenteRepository;
 import ceu.dam.mondapiBD.repository.UsuarioRepository;
 
@@ -23,6 +35,14 @@ public class AdminServiceImp implements AdminService {
 	private UsuarioRepository repoUser;
 	@Autowired
 	private TutorDocenteRepository repoTutor;
+	@Autowired
+	private EmpresaRepository repoEmpresa;
+	@Autowired
+	private AlumnoRepository repoAlumno;
+	@Autowired
+	private FechaRepository repoFecha;
+	@Autowired
+	private RegistroRepository repoRegistro;
 
 	@Override
 	public TutorDocente login(String username, String contraseña)
@@ -116,57 +136,97 @@ public class AdminServiceImp implements AdminService {
 
 		Optional<Usuario> userOpt = repoUser.findOneByNombreUsuario(nuevoUsuario.getNombreUsuario());
 
-		if (userOpt.isPresent()) {
+		if (!userOpt.isPresent()) {
 			throw new UserExistsException("Ya existe un registo con ese nombre de usuario");
 		}
+		userOpt.get().setActivo(true);
 
 		return repoUser.save(nuevoUsuario);
 
 	}
 
 	@Override
-	public Usuario editarUsuario(Usuario usuarioEditado) {
-		return null;
+	public Usuario editarUsuario(Usuario usuarioEditado) throws UserNotFoundException, UsernameUsedException {
+
+		Optional<Usuario> userOpt = repoUser.findById(usuarioEditado.getId());
+
+		if (userOpt.isEmpty()) {
+			throw new UserNotFoundException("El usuario indicado no existe en Base de datos");
+		}
+		Optional<Usuario> usernameUsed = repoUser.findOneByNombreUsuario(usuarioEditado.getNombreUsuario());
+
+		if (usernameUsed.isPresent()) {
+			throw new UsernameUsedException("El nombre de usuario ya esta en uso");
+		}
+
+		return repoUser.save(usuarioEditado);
 	}
 
 	@Override
 	public List<Empresa> consultarEmpresas() {
-		return null;
+
+		return repoEmpresa.findAll(Sort.by("nombreEmpresa").ascending());
 	}
 
 	@Override
-	public Empresa crearEmpresa(Empresa nuevaEmpresa) {
-		return null;
+	public Empresa crearEmpresa(Empresa nuevaEmpresa) throws AlreadyExistsException {
+		Optional<Empresa> empresaOpt = repoEmpresa.findById(nuevaEmpresa.getNombreEmpresa());
+
+		if (empresaOpt.isPresent()) {
+			throw new AlreadyExistsException("Ya existe la empresa en base de datos");
+		}
+
+		return repoEmpresa.save(nuevaEmpresa);
 	}
 
 	@Override
 	public Empresa editarEmpresa(Empresa empresaEditada) {
-		return null;
+
+		return repoEmpresa.save(empresaEditada);
 	}
 
 	@Override
 	public List<TutorDocente> consultarTutores() {
-		return null;
+
+		return repoTutor.findAll(Sort.by("nombreDocente"));
 	}
 
+	// TODO: asignacion de tutor=
 	@Override
-	public TutorDocente crearTutorDocente(TutorDocente nuevoTutor) {
-		return null;
+	public TutorDocente crearTutorDocente(TutorDocente nuevoTutor, Usuario usuario) throws UserExistsException {
+
+		usuario.setPerfil("TUTOR DOCENTE");
+
+		Usuario newUser = crearUsuario(usuario);
+		nuevoTutor.setIdUsuario(newUser.getId());
+		nuevoTutor.setActivo(true);
+
+		TutorDocente newTutor = repoTutor.save(nuevoTutor);
+		newUser.setIdTutor(newTutor.getId());
+
+		repoUser.save(newUser);
+
+		return newTutor;
+
 	}
 
 	@Override
 	public TutorDocente editarTutorDocente(TutorDocente tutorEditado) {
-		return null;
+
+		return repoTutor.save(tutorEditado);
 	}
 
+	// se ordena en el front
 	@Override
 	public List<Alumno> consultarAlumnos() {
-		return null;
+
+		return repoAlumno.findAll();
 	}
 
 	@Override
 	public Alumno editarAlumno(Alumno alumnoEditado) {
-		return null;
+
+		return repoAlumno.save(alumnoEditado);
 	}
 
 	@Override
@@ -175,19 +235,31 @@ public class AdminServiceImp implements AdminService {
 
 	@Override
 	public List<Fecha> consultarFechas() {
-		return null;
+		return repoFecha.findAll(Sort.by("fecha"));
 	}
 
 	@Override
 	public void borrarFecha(String id) {
+
+		repoRegistro.deleteAllByIdFecha(id);
+
+		repoFecha.deleteById(id);
+
 	}
 
 	@Override
-	public void cerrarSesion() {
+	public void cerrarSesion(String idUsuario) throws NotFoundException {
+
+		Usuario userOpt = repoUser.findById(idUsuario).orElseThrow(() -> new NotFoundException(
+				"El usuario con el que desea cerrar sesion no se encuentra en Base de datos"));
+
+		userOpt.setEstaLogueado(false);
 	}
 
 	@Override
-	public void cerrarAplicacion() {
+	public void cerrarAplicacion(String idUsuario) throws NotFoundException {
+
+		cerrarSesion(idUsuario);
 
 		System.exit(0);
 	}

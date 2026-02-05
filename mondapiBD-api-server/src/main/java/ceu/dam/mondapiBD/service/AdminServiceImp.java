@@ -37,15 +37,30 @@ public class AdminServiceImp implements AdminService {
 
 		userOpt.get().setEstaLogueado(true);
 
+		repoUser.save(userOpt.get());
+
 		return repoTutor.findByIdUsuario(userOpt.get().getId())
 				.orElseThrow(() -> new UserNotFoundException("No existe Tutor con el usuario indicado indicado"));
 
 	}
 
 	@Override
-	public void cambiarContraseña(String idUsuario, String contraseñaAntigua, String contraseñaNueva) {
-		
-		
+	public void cambiarContraseña(String idUsuario, String contraseñaAntigua, String contraseñaNueva)
+			throws UserNotFoundException, UserNotLoggedException {
+
+		Optional<Usuario> userOpt = repoUser.findById(idUsuario);
+
+		if (userOpt.isEmpty()) {
+			throw new UserNotFoundException("El usuario indicado no existe en BBDD");
+		} else if (!userOpt.get().getEstaLogueado()) {
+			throw new UserNotLoggedException("El usuario no se encuentra logeado");
+		} else if (userOpt.get().getContraseña().equals(contraseñaAntigua)) {
+
+			userOpt.get().setContraseña(contraseñaNueva);
+
+			repoUser.save(userOpt.get());
+
+		}
 
 	}
 

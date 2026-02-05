@@ -33,10 +33,12 @@ public interface AdminService {
 	 * 
 	 * @param contraseñaAntigua La contraseña actual del usuario (cifrada)
 	 * @param contraseñaNueva   La nueva contraseña (cifrada, mínimo 8 caracteres)
+	 * @throws UserNotFoundException 
+	 * @throws UserNotLoggedException 
 	 * @throws ValidationException si la contraseña antigua es incorrecta o la nueva
 	 *                             no cumple requisitos
 	 */
-	public void cambiarContraseña(String idUsuario, String contraseñaAntigua, String contraseñaNueva);
+	public void cambiarContraseña(String idUsuario, String contraseñaAntigua, String contraseñaNueva) throws UserNotFoundException, UserNotLoggedException;
 
 	/**
 	 * Consulta todos los usuarios del sistema. Muestra información de usuario,

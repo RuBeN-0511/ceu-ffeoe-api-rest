@@ -1,5 +1,6 @@
 package ceu.dam.mondapiBD.controller;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import ceu.dam.mondapiBD.dto.request.CambioContraseñaRequest;
 import ceu.dam.mondapiBD.dto.request.UsernamePasswordRequest;
+import ceu.dam.mondapiBD.dto.response.TutorDocenteResponse;
 import ceu.dam.mondapiBD.exceptions.IncorrectPasswordException;
 import ceu.dam.mondapiBD.exceptions.UserNotActiveException;
 import ceu.dam.mondapiBD.exceptions.UserNotFoundException;
@@ -24,9 +26,10 @@ public class AdminController {
 	private AdminService service;
 
 	@PostMapping("/login")
-	public TutorDocente login(@RequestBody UsernamePasswordRequest user)
+	public TutorDocenteResponse login(@RequestBody UsernamePasswordRequest user)
 			throws UserNotFoundException, IncorrectPasswordException, UserNotActiveException {
-		return service.login(user.getUsername(), user.getPassword());
+		TutorDocente tutor = service.login(user.getUsername(), user.getPassword());
+		return new ModelMapper().map(tutor, TutorDocenteResponse.class);
 	}
 
 	@PutMapping("/cambiarContraseña")

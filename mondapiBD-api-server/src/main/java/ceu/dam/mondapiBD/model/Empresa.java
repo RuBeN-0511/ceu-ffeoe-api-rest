@@ -15,5 +15,5 @@ public class Empresa {
 	private String emailTutor;
 	private Integer numeroTelefono;
 	private Boolean activo;
-	
+
 }

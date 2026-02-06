@@ -12,6 +12,8 @@ import ceu.dam.mondapiBD.model.RegistroPracticas;
 public interface RegistroRepository extends MongoRepository<RegistroPracticas, String> {
 
 	public List<Fecha> findAllByIdFecha(String idFecha);
+
 	public void deleteAllByIdFecha(String idFecha);
 	
+	public List<RegistroPracticas> findAllByIdAlumno(String idAlumno);
 }

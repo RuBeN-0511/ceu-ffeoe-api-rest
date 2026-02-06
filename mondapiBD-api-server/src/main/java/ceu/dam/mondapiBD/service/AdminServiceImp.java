@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import ceu.dam.mondapiBD.exceptions.AlreadyExistsException;
 import ceu.dam.mondapiBD.exceptions.IncorrectPasswordException;
 import ceu.dam.mondapiBD.exceptions.NotFoundException;
 import ceu.dam.mondapiBD.exceptions.UserExistsException;
@@ -110,23 +111,21 @@ public class AdminServiceImp implements AdminService {
 
 	}
 
-//	TODO: si se va a llamar al metodo desde la lista de usuarios, realmente es necesario este metodo?
-	@Override
 	public void activarUsuario(String idUsuario) throws UserNotFoundException {
-
-		Optional<Usuario> userOpt = repoUser.findById(idUsuario);
-
-		if (userOpt.isEmpty()) {
-			throw new UserNotFoundException("No se ha encontrado el usuario indicado");
-		} else if (!userOpt.get().getActivo()) {
-			userOpt.get().setActivo(true);
-		}
-
+		cambiarEstadoUsuario(idUsuario, true);
 	}
 
-	// TODO: Se pueden juntar en un mismo metodo llamada alternar
 	@Override
-	public void desactivarUsuario(String idUsuario) {
+	public void desactivarUsuario(String idUsuario) throws UserNotFoundException {
+		cambiarEstadoUsuario(idUsuario, false);
+	}
+
+	private void cambiarEstadoUsuario(String idUsuario, boolean activar) throws UserNotFoundException {
+		Usuario usuario = repoUser.findById(idUsuario)
+				.orElseThrow(() -> new UserNotFoundException("No se ha encontrado el usuario indicado"));
+
+		usuario.setActivo(activar);
+		repoUser.save(usuario);
 	}
 
 	@Override
@@ -191,8 +190,8 @@ public class AdminServiceImp implements AdminService {
 		return repoTutor.findAll(Sort.by("nombreDocente"));
 	}
 
-	// TODO: asignacion de tutor=
 	@Override
+//	Puede pasarse solo un String del nombre
 	public TutorDocente crearTutorDocente(TutorDocente nuevoTutor, Usuario usuario) throws UserExistsException {
 
 		usuario.setPerfil("TUTOR DOCENTE");

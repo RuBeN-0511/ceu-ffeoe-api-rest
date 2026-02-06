@@ -3,6 +3,7 @@ package ceu.dam.mondapiBD.service;
 import java.time.LocalDate;
 import java.util.List;
 
+import ceu.dam.mondapiBD.exceptions.AlreadyExistsException;
 import ceu.dam.mondapiBD.exceptions.IncorrectPasswordException;
 import ceu.dam.mondapiBD.exceptions.NotFoundException;
 import ceu.dam.mondapiBD.exceptions.UserExistsException;
@@ -89,9 +90,10 @@ public interface AdminService {
 	 * está actualmente activo.
 	 * 
 	 * @param id Identificador del usuario a desactivar
+	 * @throws UserNotFoundException 
 	 * @throws ValidationException si el usuario ya está inactivo o no existe
 	 */
-	public void desactivarUsuario(String id);
+	public void desactivarUsuario(String id) throws UserNotFoundException;
 
 	/**
 	 * Crea un nuevo usuario en el sistema. El nombre de usuario debe ser único. La
